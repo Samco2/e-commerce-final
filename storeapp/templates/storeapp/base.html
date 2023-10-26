@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Drinks, beverages, wines, spirit and other food item online store." />
+    <meta property="og:title" content="GBS - Buy your beverages and wine at Gem Beverage Store online." />
+    <meta property="og:description"
+        content="Tiaco is an E-commerce website. where varieties of beverages, wine, spirit and drinks and food items are offered for sale online." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="http://gbs.corg/gbs.jpg" />
+    <meta property="og:url" content="http://gbs.org" />
+    <title>GBS | BEVERAGE'S E-COOMERCE WEBSITE</title>
+    <link href="https://fonts.googleapis.com/css2?family=EB Garamond:wght@400;500;700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{%  static 'static/frontend1/css/style.css' %}" />
+    <!-- <link rel="stylesheet" type="text/css" href="{% static 'static/frontend/css/style.css' %}"> -->
+    <!-- <link rel="stylesheet" href="{% static 'static/frontend/css/icon-font.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'static/frontend/css/style.css' %}"> -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+
+    <script>
+
+        let user = "{{request.user}}"
+
+
+        function getToken(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getToken('csrftoken');
+
+
+
+
+
+        function getCookie(name) {
+            // Split cookie string and get all individual name=value pairs in an array
+            var cookieArr = document.cookie.split(";");
+
+            // Loop through the array elements
+            for (var i = 0; i < cookieArr.length; i++) {
+                var cookiePair = cookieArr[i].split("=");
+
+                /* Removing whitespace at the beginning of the cookie name
+                and compare it with the given string */
+                if (name == cookiePair[0].trim()) {
+                    // Decode the cookie value and return
+                    return decodeURIComponent(cookiePair[1]);
+                }
+            }
+
+            // Return null if not found
+            return null;
+        }
+        var cart = JSON.parse(getCookie('cart'))
+
+        if (cart == undefined) {
+            cart = {}
+            console.log('Cart Created!', cart)
+            document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/"
+        }
+        console.log('Cart:', cart)
+    </script>
+
+</head>
+
+<body>
+    <header>
+        <nav class="nav">
+            <ul class="nav_log">
+                <li>
+                    <a href="/">
+                        <img src="{% static 'static/img/logo.png' %}" alt="GBS-logo">
+                    </a>
+                </li>
+            </ul>
+            <!-- This is search button  -->
+            <ul class="nav_search">
+                <div id="navbarSupportedContent">
+                    <form class="nav_flex" action="{% url 'search' %}" method='GET'>
+                        <svg>
+                            <use xlink:href="{% static 'static/img/sprite.svg#search' %}"></use>
+                        </svg>
+                        <input name="search_query" type="search" value="{{search_query}}"
+                            placeholder="Search products and categories" aria-label="Search" style="width: 19rem"
+                            required>
+                        <button class="btn" type="submit">Search</button>
+                    </form>
+                </div>
+            </ul>
+            <ul class="nav-item">
+
+
+
+                <!-- This my cart -->
+                <li nav-item_dropdown>
+                    <form class="nav_form" action="{% url 'cart' %}">
+                        <button class=" nav_cart" type="submit">
+                            <span class="badge" id='qty'>
+                                {{cart.num_of_items}}
+                            </span>
+                            <svg class="nav_icon">
+                                <use xlink:href="/static/img/sprite.svg#shopping-cart"></use>
+                            </svg>
+
+                            <span>My Cart</span>
+
+                        </button>
+                    </form>
+                </li>
+
+
+               
+
+                <!-- My Acount & order -->
+                <li class="nav-item_dropdown">
+                    {% if request.user.is_authenticated %}
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <svg class="nav_icon">
+                            <use xlink:href="/static/img/sprite.svg#user-svgrepo-com"></use>
+                        </svg> Hi,
+                        {{request.user.first_name}}
+                    </a>
+
+
+
+
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+
+                        <li class="nav-item_dropdown-next"> <a href="{% url 'dashboard' %}"><svg class="nav_icon">
+                                    <use xlink:href="/static/img/sprite.svg#user-svgrepo-com"></use>
+                                </svg> <span>My Account</span></a>
+                        </li>
+                        <li class="nav-item_dropdown-next"><a href="{% url 'order' %}"><svg>
+                                    <use xlink:href="/static/img/sprite.svg#shopping-cart"></use>
+                                </svg><span>Orders</span></a></li>
+                        <li class="nav-item_dropdown-next"><a class="nav_dropdown-item"
+                                href=" {% url 'saveitems' %} "><svg class="nav_icon">
+                                    <use xlink:href="/static/img/sprite2.svg#heart"></use>
+                                </svg><span>saved Items</span></a>
+                        </li>
+                        <li class="nav-item_dropdown-next">
+                            <hr class="nav_dropdown-divider" />
+                        </li>
+                        <li>
+                            <a class=" txtalgn nav-item_dropdown-next auth" href="{% url 'UserProfile:signout' %}">Sign
+                                Out</a>
+                        </li>
+                    </ul>
+                    {% else %}
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <svg class="nav_icon">
+                            <use xlink:href="/static/img/sprite.svg#user-svgrepo-com"></use>
+                        </svg>
+                        <span> Account</span>
+                        <svg class="icon">
+                            <use xlink:href="/static/img/sprite.svg#arrow-down"></use>
+                        </svg>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li class="nav-item_dropdown-next"><a href="{% url 'dashboard' %}"><svg>
+                                    <use xlink:href="static/img/sprite2.svg#user-heart"></use>
+                                </svg> <span>My Account</span></a></li>
+                        <li class="nav-item_dropdown-next"><a href="{% url 'order' %}"><svg>
+                                    <use xlink:href="static/img/sprite.svg#shopping-cart"></use>
+                                </svg><span>Orders</span></a></li>
+                        <li class="nav-item_dropdown-next"><a class="nav_dropdown-item" href="#"><svg>
+                                    <use xlink:href="/static/img/sprite2.svg#heart"></use>
+                                </svg><span>Saved Items</span></a></li>
+                        <li class="nav-item_dropdown-next">
+                            <hr class="nav_dropdown-divider" />
+                        </li>
+                        <li class="txtalgn nav-item_dropdown-next auth"><a class="nav_dropdown-item auth"
+                                href="{% url 'UserProfile:signin' %}">Sign In</a>
+                        </li>
+                    </ul>
+                    {% endif %}
+                </li>
+
+            </ul>
+        </nav>
+        <nav2 class="nav2">
+            <ul class="nav2_all">
+                {% for category in categories %}
+
+                <li class="nav2_all-menu">
+                    <a href="#">All
+                        <svg class="nav_icon">
+                            <use xlink:href="{% static 'static/img/sprite.svg#bar' %}"></use>
+                        </svg>
+                    </a>
+                    <ul>
+                        <li nav2_all-menu-nxt><a href="{% url 'category' category.slug %}">{{category.title}}</a></li>
+                        <!-- <li nav2_all-menu-nxt><a href="#">Spirit</a></li>
+                        <li nav2_all-menu-nxt><a href="#">Wine</a></li>
+                        <li nav2_all-menu-nxt><a href="#">Beer</a></li>
+                        <li nav2_all-menu-nxt><a href="#">Other</a></li> -->
+                    </ul>
+                </li>
+                {% endfor %}
+            </ul>
+            <ul class="nav2_itm">
+                {% for category in categories %}
+                <li><a href="{% url 'category' category.slug %}">{{category.title}}</a></li>
+                <!-- <li><a href="#">Spirit</a></li>
+                <li><a href="#">Wine</a></li>
+                <li><a href="#">Beer</a></li>
+                <li><a href="#">Other</a></li> -->
+                {% endfor %}
+            </ul>
+        </nav2>
+
+     
+
+
+
+
+
+    </header>
+    {% for message in messages %}
+    <div class="alert1" id='alert' role="alert">
+        {{message}}
+        <button class="cancelBtn"
+            style="margin-left: auto; font-size: 25px; background: none; border: none">X</button>
+
+
+    </div>
+    {% endfor %}
+    {% block content %}
+
+    <!-- <product class="wraper"> -->
+
+    <h1>Hello World</h1>
+    {% endblock %}
+    <!-- </product> -->
+    <footer class="ft">
+        <div class="ft_1">
+            <div class="ft_1-supt">
+                <div class="ft_1-email">
+                    <h5>EMAIL SUPPORT</h5>
+                    <p>samcoadeyemi@mail.com</p>
+                </div>
+
+            </div>
+            <div class="ft_1-PHONE">
+                <h5>PHONE SUPPORT</h5>
+                <p>+2348037285847</p>
+            </div>
+
+
+
+            <div class="ft_1-form">
+                <div class="ft_1-let">
+                    <h5>GET LATEST DEALS</h5>
+                    <p>Our best deals sent to your inbox</p>
+                </div>
+                <form class="nav_flex" action="#" method='GET'>
+                    <div class="ft_1-svginput">
+                        <svg class="ft_1-icon">
+                            <use xlink:href="{% static 'static/img/sprite5.svg#envelope-regular' %}"></use>
+                        </svg>
+                        <input name="Subscribe" type="email" placeholder="Email address" aria-label="email"
+                            style="width: 19rem" required>
+                    </div>
+                    <button class="btn" type="submit">Subscribe</button>
+                </form>
+            </div>
+
+
+        </div>
+        <div class="ft_3">
+            <div class="container">
+
+                <h5>OUR BRANDS
+                </h5>
+
+                <div class="row align gap">
+                    <img src="{% static 'static/img/brand/bow.png'  %}" alt="">
+                    <img src="{% static 'static/img/brand/chat.png'  %}" alt="">
+                    <img src="{% static 'static/img/brand/free.png'  %}" alt="">
+                    <img src="{% static 'static/img/brand/orangina.png'  %}" alt="">
+                    <img src="{% static 'static/img/brand/pepsi.png'  %}" alt="">
+                    <img src="{% static 'static/img/brand/rebina.png'  %}" alt="">
+                    <img src="{% static 'static/img/brand/suntory.png'  %}" alt="">
+
+                </div>
+            </div>
+        </div>
+        <div class="ft_2">
+            <div class="ft_2-help">
+                <h5>NEED HELP?</h5>
+
+                <ul>
+                    <li><a href="#">Chat with us</a></li>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="">Contact us</a></li>
+                </ul>
+            </div>
+
+            <div class="ft_2-gbs">
+                <h5>ABOUT GBS</h5>
+
+                <ul>
+                    <li><a href="#">About us</a></li>
+                    <li><a href="#">GBS career</a></li>
+                    <li><a href="">Terms and Conditions</a></li>
+                    <li><a href="#">Cookies Notice</a></li>
+                    <li><a href="">Flash sales</a></li>
+                </ul>
+            </div>
+
+            <div class="ft_2-gbs">
+                <h5>PAYMENT METHODS</h5>
+
+                <ul>
+                    <li><a href="#">Delivery</a></li>
+                    <li><a href="#">Master Card</a></li>
+                    <li><a href="">VISA</a></li>
+                    <li><a href="#">PAYPAL</a></li>
+                    <li><a href="">STRIPE</a></li>
+                </ul>
+            </div>
+
+            <div class="ft_2-soclcon">
+                <h5>CONNECT WITH US</h5>
+                <a href="#"><img src="{% static 'static/img/facebook.png' %}" alt=""></a>
+                <a href="#"><img src="{% static 'static/img/twitter.png' %}" alt=""></a>
+                <a href="#"><img src="{% static 'static/img/instagram.png' %}" alt=""></a>
+            </div>
+
+        </div>
+        <div class="ft_3-lg">
+            <a href="/">
+                <img src="{% static 'static/img/logof.png' %}" alt="GBS-logo">
+            </a>
+            <p>Copyright ©2023 gbs.com; All rights reserved </p>
+        </div>
+
+
+    </footer>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
+
+<!-- Core theme JS-->
+<script src="{% static 'js/scripts.js' %}">
+
+</script>
+
+
+
+
+
+
+<script type="text/javascript" src="{% static 'static/frontend1/script.js' %}"></script>
+    
+</script>
+<script src="{% static 'static/frontend/css/main.js' %}"></script>
+<script>
+    cancelBtns = document.getElementsByClassName('cancelBtn')
+    for (let i = 0; i < cancelBtns.length; i++) {
+        cancelBtns[i].addEventListener('click', cancelAlert)
+    }
+    function cancelAlert(e) {
+        e.target.parentElement.style.display = 'none'
+    }
+</script>
+</body>
+
+</html>

@@ -1,0 +1,378 @@
+{% extends 'storeapp/base.html' %}
+{% load static %}
+{% block title %}Payment{% endblock %}
+{% block content %}
+
+<style>
+  .account-form input,
+    {
+    border: 2px solid #ccc;
+    height: calc(2em + .75rem + 2px);
+  }
+
+  .form-control {
+    border: 2px solid #ccc;
+  }
+
+  .account-form input:focus {
+    border-color: #1497ff;
+    box-shadow: inset 0 0px 0px rgba(0, 0, 0, 0.075), 0 0 0px rgba(255, 0, 0, 0.6);
+  }
+</style>
+<script
+    src="https://www.paypal.com/sdk/js?client-id=ASF2zs710GVTLvqqV4pigT2l0oe_S5eeXJ8_EHcqTXxcKChOv3zZ-ZkYIWEcMVRidtTouLgBpbWdnumb&currency=USD"></script>
+
+
+<br><br>
+
+<div class = 'container'>
+    <div class = 'row'>
+
+
+
+      <!-- Shipping-Form Section -->
+  <!-- Connecting the addresses to address in the data-base mode and save to data basse-->
+        <div class = 'col-md-6'>
+          <div class="uk-width-xlarge uk-margin">
+              <div class="uk-card uk-card-small uk-card-default uk-card-body">
+                {% if customer_address %}
+                {% for address in customer_address %}
+                <h4>Current Address</h4>
+                <form class="" action="index.html" method="post">
+                  <ul>
+                    <li><h5>Home: {{address.home_address}} <h5></li>
+                      <li><h5>Bus stop:{{address.bus_stop}} <h5></li>
+                        <li><h5>city: {{address.city}} <h5></li>
+                          <li><h5>State: {{address.state}} <h5></li>
+                            <li><h5>Post Code:{{address.home_address}} <h5></li>
+                              <li><h5>Phone number:{{address.home_address}} <h5></li>
+                  </ul>
+                </form>
+
+
+                <a href = " {% url 'UserProfile:changeaddress' %} "><button class="btn btn-info">Change Address</button></a>
+
+                {% endfor %}
+                {% else %}
+                  <form class="row g-3" id='shipping-form' method = 'POST'>
+                  {% csrf_token %}
+                  <div id = 'shippingInfo'>
+                      <h3>Shipping Information</h3>
+                      <br>
+
+
+                      <div class = 'row'>
+
+                        {% for field in form %}
+
+                          <div class="col-md-6">
+                              <label for="inputEmail4" class="form-label"> {{field.label}} </label>
+                              <!-- <input type="text" class="form-control" id="inputEmail4" name = 'address' required> -->
+                              {{field}}
+                              <br>
+                            </div>
+                            {% endfor %}
+
+
+                      </div>
+
+                  </div>
+
+
+                  <div class="col-12">
+                      <div class="d-grid gap-2">
+                          <button class="btn btn-primary" type="submit" id = 'cbtn'>Continue</button>
+                          <!--<button id="submit" class="btn btn-primary w-100 fw-bold" data-secret="#">Pay</button>
+                           <button class="btn btn-primary hidden" type="button" id = 'pbtn'>Paypal</button> -->
+                        </div>
+                  </div>
+
+
+                  <div class="col-12">
+                    <div class="d-grid gap-2">
+                         <div id = 'pbtn' class = 'hidden'>
+
+                         </div>
+
+
+    <!-- Include the PayPal JavaScript SDK -->
+
+
+
+                      </div>
+                </div>
+
+                </form>
+{% endif %}
+
+              </div>
+          </div>
+      </div>
+
+
+
+      <!-- Cart Section -->
+
+
+        <div class = 'col-md-6'>
+            <div class="uk-width-xlarge uk-margin">
+                <div class="uk-card uk-card-small uk-card-default uk-card-body"><table class="table">
+                    <thead>
+                      <tr>
+
+                        <h2>Order Summary</h2>
+                        <h3><strong>Total: ${{cart.cart_total|floatformat:'2'}}</strong><h3></h3>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+
+                        <th scope="col"><h5>Item</h5></th>
+                        <th scope="col"><h5></h5></th>
+                        <th scope="col"><h5>Quantity</h5></th>
+                        <th scope="col"><h5>Price</h5></th>
+                        <th scope="col"><h5></h5></th>
+                        <th scope="col"><h5>Total</h5></th>
+                      </tr>
+                      {% for item in cartitems %}
+                      <tr>
+
+                        <td scope="row"><div id = "cart_image"><img src = '{{item.product.image.url}}'></div></td>
+                        <td><h5>{{item.product.name}}</h5></td>
+                        <td><h5>x{{item.quantity}}</h5></td>
+                        <td><h5>${{item.product.price}}</h5></td>
+                        <td><h5></h5></td>
+                        <td><h5>${{item.subTotal|floatformat:2}}</h5></td>
+                      </tr>
+                     {% endfor %}
+
+
+
+
+
+                    </tbody>
+                  </table>
+
+                  <br><br>
+                    <h4>Choose Any payment option<</h4>
+
+
+                  <div class="card">
+                    <!-- Card form copy from  stripe website-->
+                    <form method="POST" id="payment-form" class="payment-form">
+                      <span type="text" class="" id="custName" placeholder="">
+                      <span type="email" class="" id="email">
+                      <span type="text" class="" id="custAdd" >
+                      <span type="text" class="" id="custAdd2" placeholder=>
+                      <span class="" id="country" >
+                      <span class="" id="state">
+                      <span type="text" class="" id="postCode" placeholder="">
+
+                        <div class="d-block my-3">
+                          <div class="custom-control custom-radio">
+                            <input id="stripe" value="S" name="payment_option" type="radio" class="custom-control-input" style = "width:1rem !important;">
+                            <label class="custom-control-label" for="stripe">Stripe</label>
+                          </div>
+                          <div class="custom-control custom-radio">
+                            <input id="paypal" value="P" name="payment_option" type="radio" class="custom-control-input" style = "width:1rem !important;>
+                            <label class="custom-control-label" for="paypal">Paypal</label>
+                          </div>
+                        </div>
+
+                        {% csrf_token %}
+                        <h4 class="mb-3">Payment</h4>
+                        <label for="card-element">Credit or debit card</label>
+                        <div id="card-element" class="form-control form-control-payment">
+                          <!-- Payment elements will appear here -->
+                        </div>
+                        <hr class="my-4">
+                        <!-- Customer id is inside the client_secret pass from views-->
+                        <button id="submit" class="btn btn-primary w-100 fw-bold" data-secret="{{ client_secret }}">Pay</button>
+
+
+<br><br>
+
+                            <!-- Set up a container element for the button -->
+                            <div id="paypal-button-container"></div>
+                        </div>
+                    </form>
+                </div>
+
+
+
+                </div>
+              </div>
+
+
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+<!--<div class="container-fluid">
+  <div class="row no-gutter">
+    <div class="col-md-12">
+      <div class="login d-flex align-items-center py-5">
+        <div class="container">
+          <div class="row">
+            <div id="payment-form" class="col-12 col-lg-6 mx-auto">
+              <h3 class="mb-3">Billing address</h3>
+              <!-- Error messages in this element
+              <div id="card-errors" class="a" role="alert"></div>
+              <br><br>
+              <form>
+                <div class="row g-3">
+
+                  <div class="col-12">
+
+                    <input type="text" class="" id="custName" placeholder="">
+                    <div class="invalid-feedback">
+                      Valid first name is required.
+                    </div>
+                  </div>
+                  <div class="col-12">
+
+                    <input type="email" class="" id="email">
+                    <div class="invalid-feedback">
+
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+
+                    <input type="text" class="" id="custAdd" >
+                    <div class="invalid-feedback">
+
+                    </div>
+                  </div>
+                  <div class="col-12">
+
+                    <input type="text" class="" id="custAdd2" placeholder=>
+                  </div>
+                  <div class="col-md-4">
+
+                    <select class="" id="country" required>
+
+
+                    </select>
+                    <div class="invalid-feedback">
+                      Please select a valid country.
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+
+                    <select class="" id="state"> </select>
+
+                  <div class="col-md-3">
+
+                    <input type="text" class="" id="postCode" placeholder="" required>
+
+                    </div>
+                  </div>
+                </div>
+                <hr class="my-4">
+                <input type="text" class="" id="custName" placeholder="">
+                <input type="email" class="" id="email">
+                <input type="text" class="" id="custAdd" >
+                <input type="text" class="" id="custAdd2" placeholder=>
+                <select class="" id="country" required>
+                <select class="" id="state"> </select>
+                <input type="text" class="" id="postCode" placeholder="" required>
+
+              </form>-->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    {% comment %} Make csrf token availble in JS files {% endcomment %}
+    var CSRF_TOKEN = '{{ csrf_token }}';
+</script>
+<script src="https://js.stripe.com/v3/"></script>
+<script src="{% static 'payment/index.js' %}" data-rel-js></script>
+
+
+
+<!-- Papal payment -->
+<script>
+  var total = "{{cart.cart_total}}"
+
+  // Render the PayPal button into #paypal-button-container
+  paypal.Buttons({
+    // Set up the transaction
+    createOrder: function (data, actions) {
+
+      return actions.order.create({
+        purchase_units: [{
+          amount: {
+            value: parseFloat(total).toFixed(2)
+          }
+        }]
+      });
+    },
+
+    // Finalize the transaction
+    onApprove: function (data, actions) {
+      return actions.order.capture().then(function (orderData) {
+        // Successful capture! For demo purposes:
+        console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+        var transaction = orderData.purchase_units[0].payments.captures[0];
+        confirmPayment()
+
+        // Replace the above to show a success message within this page, e.g.
+        // const element = document.getElementById('paypal-button-container');
+        // element.innerHTML = '';
+        // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+        // Or go to another URL:  actions.redirect('thank_you.html');
+      });
+    }
+
+
+  }).render('#paypal-button-container');
+</script>
+
+<script>
+  let inputs = document.getElementsByTagName('input')
+  for (let i = 0; i < inputs.length; i++) {
+    inputs[i].classList.add('form-control')
+  }
+
+  function confirmPayment() {
+    const data = { total: total };
+    console.log(data.total)
+    let url = "/payment"
+
+    fetch(url, {
+      method: 'POST', // or 'PUT'
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken
+      },
+      body: JSON.stringify(data),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+        alert('Transaction completed')
+        window.location.href = " {% url 'index' %} "
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert('There is an issue with your purchase')
+      });
+
+  }
+
+</script>
+<!-- Paypal payment -->
+
+{% endblock %}

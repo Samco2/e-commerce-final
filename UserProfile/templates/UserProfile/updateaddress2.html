@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Drinks, beverages, wines, spirit and other food item online store." />
+    <meta property="og:title" content="GBS - Buy your beverages and wine at Gem Beverage Store online." />
+    <meta property="og:description"
+        content="Tiaco is an E-commerce website. where varieties of beverages, wine, spirit and drinks and food items are offered for sale online." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="http://gbs.corg/gbs.jpg" />
+    <meta property="og:url" content="http://gbs.org" />
+    <title>GBS | BEVERAGE'S E-COOMERCE WEBSITE</title>
+    <link href="https://fonts.googleapis.com/css2?family=EB Garamond:wght@400;500;700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/static/frontend1/css/style.css" />
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+</head>
+
+<body>
+    <div class="sitepad">
+        <header style="flex-basis: 10%;">
+            <div class="logoa">
+                <a href="/">
+                    <img src="/static/img/logo.png" alt="GBS-logo">
+                </a>
+            </div>
+        </header>
+        <main style="flex-basis: 83%;">
+            <section class="sign">
+                <h3>Change Address</h3>
+                <form action="POST">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <label for="{{field.label}}">{{field.label}}</label>
+                    
+                    {{field}}
+                    {% endfor %}
+
+                    
+                    <button type="submit" class="btn btn-primary">Update Address</button>
+                </form>
+                <div class="sign-txt">
+                    <p>By updating your account you agree to GBS's <span>terms of use</span> and <span>Privacy
+                            notice.
+                        </span></p>
+
+                </div>
+            </section>
+        </main>
+
+        <script>
+            let inputs = document.getElementsByTagName('input')
+            for (let i = 0; i < inputs.length; i++) {
+                inputs[i].classList.add('sign')
+            }
+        
+        </script>
+        <footer class="copyrgt">
+            <p>Copyright ©2023 gbs.com; All rights reserved </p>
+        </footer>
+    </div>
+</body>
+
+
+</html>

@@ -1,0 +1,371 @@
+{% extends 'storeapp/base.html' %}
+{% load static %}
+{% block content %}
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+    #cart_image{
+        width: 50px;
+        height: 50px;
+    }
+    #cart_image img{
+        width: 100%;
+        height: 100%;
+
+  <!-- Integrating stripe payment-->
+  .StripeElement {
+    box-sizing: border-box;
+
+    height: 40px;
+
+    padding: 10px 12px;
+
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background-color: white;
+
+    box-shadow: 0 1px 3px 0 #e6ebf1;
+    -webkit-transition: box-shadow 150ms ease;
+    transition: box-shadow 150ms ease;
+}
+
+.StripeElement--focus {
+    box-shadow: 0 1px 3px 0 #cfd7df;
+}
+
+.StripeElement--invalid {
+    border-color: #fa755a;
+}
+
+.StripeElement--webkit-autofill {
+    background-color: #fefde5 !important;
+}
+
+.payment-form,
+.card-element {
+    width: 100%;
+}
+
+.form-row,
+.submit-btn,
+.card-element {
+    width: 100%;
+}
+
+.form-row {
+    padding: 2em;
+}
+
+#paypal-button-container {
+    margin-top: 2em;
+    width: 100%;
+}
+    }
+</style>
+
+<br> <br><br><br>
+<div class = 'container'>
+    <div class = 'row'>
+
+
+
+      <!-- Shipping-Form Section -->
+  <!-- Connecting the addresses to address in the data-base mode and save to data basse-->
+        <div class = 'col-md-6'>
+          <div class="uk-width-xlarge uk-margin">
+              <div class="uk-card uk-card-small uk-card-default uk-card-body">
+                {% if customer_address %}
+                {% for address in customer_address %}
+                <h4>Current Address</h4>
+                <h5>{{address.home_address}} {{address.bus_stop}}, {{address.city}}, {{address.state}}</h5>
+                <a href = " {% url 'UserProfile:changeaddress' %} "><button class="btn btn-info">Change Address</button></a>
+
+                {% endfor %}
+                {% else %}
+                  <form class="row g-3" id='shipping-form' method = 'POST'>
+                  {% csrf_token %}
+                  <div id = 'shippingInfo'>
+                      <h3>Shipping Information</h3>
+                      <br>
+
+
+                      <div class = 'row'>
+
+                        {% for field in form %}
+
+                          <div class="col-md-6">
+                              <label for="inputEmail4" class="form-label"> {{field.label}} </label>
+                              <!-- <input type="text" class="form-control" id="inputEmail4" name = 'address' required> -->
+                              {{field}}
+                              <br>
+                            </div>
+                            {% endfor %}
+
+
+                      </div>
+
+                  </div>
+
+
+                  <div class="col-12">
+                      <div class="d-grid gap-2">
+                          <button class="btn btn-primary" type="submit" id = 'cbtn'>Continue</button>
+                          <!--<button id="submit" class="btn btn-primary w-100 fw-bold" data-secret="#">Pay</button>
+                           <button class="btn btn-primary hidden" type="button" id = 'pbtn'>Paypal</button> -->
+                        </div>
+                  </div>
+
+
+                  <div class="col-12">
+                    <div class="d-grid gap-2">
+                         <div id = 'pbtn' class = 'hidden'>
+
+                         </div>
+
+
+    <!-- Include the PayPal JavaScript SDK -->
+
+
+
+                      </div>
+                </div>
+
+                </form>
+{% endif %}
+
+              </div>
+          </div>
+      </div>
+
+
+
+      <!-- Cart Section -->
+
+
+        <div class = 'col-md-6'>
+            <div class="uk-width-xlarge uk-margin">
+                <div class="uk-card uk-card-small uk-card-default uk-card-body"><table class="table">
+                    <thead>
+                      <tr>
+
+                        <h2>Order Summary</h2>
+                        <h3><strong>Total: ${{cart.cart_total|floatformat:'2'}}</strong><h3></h3>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+
+                        <th scope="col"><h5>Item</h5></th>
+                        <th scope="col"><h5></h5></th>
+                        <th scope="col"><h5>Quantity</h5></th>
+                        <th scope="col"><h5>Price</h5></th>
+                        <th scope="col"><h5></h5></th>
+                        <th scope="col"><h5>Total</h5></th>
+                      </tr>
+                      {% for item in cartitems %}
+                      <tr>
+
+                        <td scope="row"><div id = "cart_image"><img src = '{{item.product.image.url}}'></div></td>
+                        <td><h5>{{item.product.name}}</h5></td>
+                        <td><h5>x{{item.quantity}}</h5></td>
+                        <td><h5>${{item.product.price}}</h5></td>
+                        <td><h5></h5></td>
+                        <td><h5>${{item.subTotal|floatformat:2}}</h5></td>
+                      </tr>
+                     {% endfor %}
+
+
+
+
+
+                    </tbody>
+                  </table>
+
+                  <div class="card">
+                    <h4>Stripe option</h4>
+                    <!-- Card form copy from  stripe website-->
+                    <form method="POST" id="payment-form" class="payment-form">
+                        {% csrf_token %}
+                        <div class="form-row">
+                            <label for="card-element">
+                                Credit or debit card
+                            </label>
+                            <div id="card-element" class="card-element"></div>
+                            <div id="card-errors" role="alert"></div>
+                            <button id="submit" class="btn btn-info submit-btn" type="submit" data-secret="{{ client_secret }}">
+                                Submit Payment
+                            </button>
+<br><br>
+                            <!-- Set up a container element for the button -->
+                            <div id="paypal-button-container"></div>
+                        </div>
+                    </form>
+                </div>
+
+
+
+                </div>
+              </div>
+
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- stripe payments -->
+<script>
+    {% comment %} Make csrf token availble in JS files {% endcomment %}
+    var CSRF_TOKEN = '{{ csrf_token }}';
+</script>
+<script src="https://js.stripe.com/v3/"></script>
+<script src="{% static 'payment/index.js' %}" data-rel-js></script>
+<!-- <script>
+    var stripe = Stripe('pk_test_51N4ayEGwmFNitjUhUOa34DIp1i0eI1AdhgAdV2kmuS4xcI97uFgWsF2vPik0MpwmbbVdHvc2c9qFZOv6NejCw1F2005jHychVy');
+
+    var elem = document.getElementById('submit');
+    clientsecret = elem.getAttribute('data-secret');
+
+    // Set up Stripe.js and Elements to use in checkout form
+    var elements = stripe.elements();
+    var style = {
+        base: {
+            color: "#32325d",
+            fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+            fontSmoothing: "antialiased",
+            fontSize: "16px",
+            "::placeholder": {
+                color: "#aab7c4",
+            },
+        },
+        invalid: {
+            color: "#fa755a",
+            iconColor: "#fa755a",
+        },
+    };
+
+    var card = elements.create("card", { style: style });
+    // Add an instance of the card Element into the card-element
+    card.mount("#card-element");
+
+    // Handle real-time validation errors from the card Element
+    card.on("change", function (event) {
+        var displayError = document.getElementById("card-errors");
+        if (event.error) {
+            displayError.textContent = event.error.message;
+            $('#card-errors').addClass('alert alert-info');
+        } else {
+            displayError.textContent = "";
+            $('#card-errors').removeClass('alert alert-info');
+        }
+    });
+
+    // Handle form submission
+    var form = document.getElementById("payment-form");
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        stripe.createToken(card).then(function (result) {
+            if (result.error) {
+                console.log(result.error);
+                // Inform the user if there is an error
+                var errorElement = document.getElementById("card-errors");
+                errorElement.textContent = result.error.message;
+            } else {
+                // If there is no error; send the token your server
+                stripeTokenHandler(result.token);
+            }
+        });
+    });
+
+    // Submit the form with the token ID.
+    function stripeTokenHandler(token) {
+        // Insert the token ID into the form so it gets submitted to server
+        var form = document.getElementById("payment-form");
+        var hiddenInput = document.createElement("input");
+        hiddenInput.setAttribute("type", "hidden");
+        hiddenInput.setAttribute("name", "stripeToken");
+        hiddenInput.setAttribute("value", token.id);
+        form.appendChild(hiddenInput);
+
+        //Submit the form
+        form.submit();
+    }
+</script>
+stripe payments -->
+
+<!-- Include the PayPal JavaScript SDK -->
+<script src="https://www.paypal.com/sdk/js?client-id=AWdyi0gdJ8bnRrMNcPi3vOymPFwT2in6tLbMajvbiq66gjItaMqL9wDw-2vyn72lIwBkkVBfOxihdi_k&currency=USD"></script>
+
+<script>
+  var total = "{{cart.cart_total}}"
+
+    // Render the PayPal button into #paypal-button-container
+    paypal.Buttons({
+        // Set up the transaction
+        createOrder: function(data, actions) {
+
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: parseFloat(total).toFixed(2)
+                    }
+                }]
+            });
+        },
+
+        // Finalize the transaction
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(orderData) {
+                // Successful capture! For demo purposes:
+                console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                var transaction = orderData.purchase_units[0].payments.captures[0];
+                confirmPayment()
+
+                // Replace the above to show a success message within this page, e.g.
+                // const element = document.getElementById('paypal-button-container');
+                // element.innerHTML = '';
+                // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+                // Or go to another URL:  actions.redirect('thank_you.html');
+            });
+        }
+
+
+    }).render('#paypal-button-container');
+</script>
+
+<script>
+  let inputs = document.getElementsByTagName('input')
+  for(let i = 0; i<inputs.length; i++){
+    inputs[i].classList.add('form-control')
+  }
+
+  function confirmPayment(){
+    const data = { total: total };
+    console.log(data.total)
+    let url = "/payment"
+
+fetch(url, {
+  method: 'POST', // or 'PUT'
+  headers: {
+    'Content-Type': 'application/json',
+    'X-CSRFToken': csrftoken
+  },
+  body: JSON.stringify(data),
+})
+.then(response => response.json())
+.then(data => {
+  console.log('Success:', data);
+  alert('Transaction completed')
+    window.location.href=" {% url 'index' %} "
+})
+.catch((error) => {
+  console.error('Error:', error);
+  alert('There is an issue with your purchase')
+});
+
+  }
+
+</script>
+
+{% endblock %}

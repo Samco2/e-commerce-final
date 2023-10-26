@@ -1,0 +1,556 @@
+{% extends 'storeapp/base.html' %}
+<!-- Header-->
+{% load static %}
+{% block content %}
+
+<style>
+    #imageContainer {
+        width: 60%;
+
+    }
+
+    #imageContainer img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+
+    }
+
+    #desc {
+        text-align: justify;
+    }
+
+    /* #addToCart {
+        width: 100%;
+        height: 50px;
+        border-radius: 10px;
+        background-color: lightskyblue;
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+        justify-content: space-around;
+        cursor: pointer;
+    } */
+
+    /* #updateCart {
+        width: 150px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: lightskyblue;
+        margin: auto;
+        /* display: none; */
+    }
+
+    */ #substract,
+    #quantity,
+    #add {
+        width: 50px;
+        height: inherit;
+        border: 2px solid white;
+        display: flex;
+        color: white;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    #heart {
+        cursor: pointer;
+        font-size: 85px;
+        color: magenta;
+    }
+
+    .alert {
+        display: none;
+    }
+
+    .seen {
+        display: none;
+    }
+
+    p {
+        font-size: 2rem;
+    }
+</style>
+
+
+
+<main>
+    <div class="alert alert1" id='alert' role="alert">
+        {{product.name}} added to your saved list
+        <button class="cancelBtn" style="margin-left: auto; font-size: 25px; background: none; border: none">X</button>
+
+
+    </div>
+
+    <div class="alert alert-danger" id="alertdanger" role="alert">
+        <p id='removeItem'>{{product.name}} removed from your saved list</p>
+        <button class="cancelBtn" style="margin-left: auto; font-size: 25px; background: none; border: none">X</button>
+    </div>
+
+    <section class="prdd">
+        <div class="prdd_hm">
+            <div class="svg">
+                <svg>
+                    <use xlink:href="/static/img/sprite6.svg#home"></use>
+                </svg>
+                <svg>
+                    <use xlink:href="/static/img/sprite4.svg#arrow_righ"></use>
+                </svg>
+            </div>
+
+            <p>{{product.name}}</p>
+
+        </div>
+        <div class="prdd_dtl">
+            <div class="prdd_dtl-hover">
+                <div class="prdd_dtl-hover-p"><img src={{product.image.url}} alt="no image"></div>
+                <div class="prdd_dtl-hover-p"><img src={{product.image.url}} alt="no image"></div>
+                <div class="prdd_dtl-hover-p"><img src={{product.image.url}} alt="no image"></div>
+                <div class="prdd_dtl-hover-p"><img src={{product.image.url}} alt="no image"></div>
+            </div>
+
+            <div class="prdd_dtl-prt">
+                <img src={{product.image.url}} alt="No image">
+            </div>
+            <div class="prdd_dtl-desc">
+                <h4>{{product.name}}</h4>
+                <div class="prdd_dtl-desc-r">
+                    <span>
+                        <p>(4.5)</p>
+                        <svg>
+                            <use xlink:href="/static/img/sprite7.svg#star-regular"></use>
+                        </svg>
+                        <svg>
+                            <use xlink:href="/static/img/sprite7.svg#star-regular"></use>
+                        </svg>
+                        <svg>
+                            <use xlink:href="/static/img/sprite7.svg#star-regular"></use>
+                        </svg>
+                        <svg>
+                            <use xlink:href="/static/img/sprite7.svg#star-regular"></use>
+                        </svg>
+                    </span>
+                    <a href="#">View all reviews</a>
+
+
+                    <a href="#">
+                        <svg>
+                            <use xlink:href="/static/img/sprite6.svg#pencil-svgrep"></use>
+                        </svg>
+                        write a review
+                    </a>
+
+
+                    <a href="#">
+                        <div class="spinner-border text-info seen" id="heartSpinner" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+
+                        <form method='POST' id='form' data-id={{product.id}}>
+                            {% csrf_token %}
+
+                            {% if saveitem %}
+                            {% if request.user.is_authenticated %}
+
+                            <button id='heartContainer' type='submit' style='background: none; border: none;'
+                                class="itemsave">
+                                <i id='heart' data-id={{product.id}}>
+                                    <svg>
+                                        <use xlink:href="/static/img/sprite6.svg#home" id='heart'
+                                            data-id={{product.id}}>
+                                        </use>
+                                    </svg>
+                                </i>
+                                <label style='color: #01070e; font-size: 1.6rem;'> SaveItem </label>
+
+                            </button>
+                            {% else %}
+                            <button id='heartContainer' type='submit' style='background: none; border: none'>
+                                <i id='heart' data-id={{product.id}}>
+                                    <svg>
+                                        <use xlink:href="/static/img/sprite6.svg#home" id='heart'
+                                            data-id={{product.id}}>
+                                        </use>
+                                    </svg>
+                                </i>
+                            </button>
+                            {% endif %}
+                            {% else %}
+                            <button id='heartContainer' type='submit' style='background: none; border: none'>
+                                <i id='heart' data-id={{product.id}}>
+                                    <svg>
+                                        <use xlink:href="/static/img/sprite6.svg#home" id='heart'
+                                            data-id={{product.id}}>
+                                        </use>
+                                    </svg>
+                                </i>
+                            </button>
+                            {% endif %}
+                        </form>
+
+
+
+
+                        <!-- <form method='POST' id='form' data-id={{product.id}}>
+                            {% csrf_token %}
+
+                            {% if saveitem %}
+                            {% if request.user.is_authenticated %}
+                            <button id='heartContainer' type='submit' style='background: none; border: none'>
+                                <i class="bi bi-heart-fill" style="font-size: 30px;" id='heart'
+                                    data-id={{product.id}}><svg>
+                                        <use xlink:href="/static/img/sprite6.svg#home" id='heart'
+                                            data-id={{product.id}}>
+                                        </use>
+                                    </svg>
+                                    <p> Saved Item</p>
+                                </i>
+                            </button>
+                            {% else %}
+                            <button id='heartContainer' type='submit' style='background: none; border: none'>
+                                <i class="bi bi-heart" style="font-size: 30px;" id='heart' data-id={{product.id}}>
+                                    <svg>
+                                        <use xlink:href="/static/img/sprite6.svg#home" id='heart'
+                                            data-id={{product.id}}>
+                                        </use>
+                                    </svg>
+                                </i>
+                            </button>
+                            {% endif %}
+                            {% else %}
+                            <button id='heartContainer' type='submit' style='background: none; border: none'>
+                                <i class="bi bi-heart" style="font-size: 30px;" id='heart' data-id={{product.id}}>
+                                    <svg>
+                                        <use xlink:href="/static/img/sprite6.svg#home" id='heart'
+                                            data-id={{product.id}}>
+                                        </use>
+                                    </svg></i>
+                            </button>
+                            {% endif %}
+                        </form> -->
+
+
+                    </a>
+
+                </div>
+                <div class="prdd_dtl-desc-price">
+                    <h4>${{product.price|floatformat:2}}</h4>
+                    <h5 style="text-decoration: line-through">
+                        ${{product.old_price|floatformat:2}}
+                    </h5>
+                    <button class="btn btn-bc">Buy now</button>
+                </div>
+                <div class="prdd_dtl-desc-c">
+
+                    <span class="prdd_dtl-desc-c-inc" id="updateCart">
+                        <div id="substract"><img src="/static/img/-ve.png" alt="-ve"></div>
+                        <p>1</p>
+
+                        <div class="add">
+                            <img src="/static/img/+ve.png" alt="+ve">
+
+                        </div>
+                    </span>
+                    <!-- {% comment %}
+                    <button class="btn" id="addToCart" data-id="{{product.id}}" data-action="add">Add to
+                        cart</button>
+                    {% endcomment %}
+                    <button class="btn" id="addToCart" data-id="{{product.id}}" data-action="add">Add to
+                        cart</button>
+
+                    <button class="btn">Add to cart</button> -->
+                    {% comment %}
+                    <button class="btn btn-bc" id="addToCart" data-id="{{product.id}}" data-action="add">
+                        <h4 style='font-weight: 50px'>Add To Cart</h4>
+                        <div class="spinner-border seen" id='spinner' role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+
+                    </button>
+                    {% endcomment %}
+                    <button id="addToCart" data-id="{{product.id}}" data-action="add" class='btn btn-bc'>
+                        Add To Cart
+                        <div class="spinner-border seen" id='spinner' role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+
+
+                    </button>
+                </div>
+                <div class="prdd_dtl-desc-wrd">
+                    <h4>Description</h4>
+                    <p id="desc">{{product.description }}</p>
+
+                </div>
+
+                <div class="prdd_dtl-desc-shelf">
+                    <h4>shelf life and Longevity</h4>
+                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Commodi quae, iusto a dolores
+                        doloribus autem illum necessitatibus quisquam vel sint totam soluta, laudantium ipsam
+                        perspiciatis, ad quos consequatur? Consectetur, suscipit rerum, labore saepe temporibus quae
+                        quisquam excepturi voluptates neque sequi aliquid accusamus molestias eum aperiam ipsam
+                        minus eaque facere nemo.</p>
+                </div>
+
+
+            </div>
+
+
+
+        </div>
+        <div class="prdd_ingrt">
+            <div class="prdd_ingrt-d">
+                <h5>INGRIDIENTS</h5>
+                <p>
+                    Sugar, alcohol, beans, Titus,Mackrel, communion and fish
+                </p>
+            </div>
+            <hr>
+            <div class="prdd_ingrt-d">
+                <h5>TASTING NOTES</h5>
+                <p>
+                    Mid-better drink
+                </p>
+            </div>
+            <hr>
+
+        </div>
+
+        <div class="bckg">
+            {% if recently_viewed_products %}
+            <div class="container mg">
+                <div class="row align">
+                    <h4 style=" color:white">Recently Viewed Products</h4>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="dflex mg">
+                {% for product in recently_viewed_products %}
+                <div class="col-1-of-6 align">
+                    <div class="card flx-drt wdth mg">
+                        <div class="card_img">
+                            <a href="{% url 'detail' product.slug %}"><img src="{{product.image_url.url}}"
+                                    alt="slide1"></a>
+                        </div>
+                        <div class="card_priced pd-l">
+                            <div class="card_price-title">
+                                <h5>{{product.name}}</h5>
+                            </div>
+                            <p> A Lemon flavoured soft drink which contains Dextrin.</p>
+                            <div class="card_priced-r">
+                                <h5>3500+ Sold</h5>
+                                <div class="span">
+                                    4.0
+                                    <svg>
+                                        <use xlink:href="/static/img/sprite7.svg#star-regular"></use>
+                                    </svg>
+                                    <svg>
+                                        <use xlink:href="/static/img/sprite7.svg#star-regular"></use>
+                                    </svg>
+                                    <svg>
+                                        <use xlink:href="/static/img/sprite7.svg#star-regular"></use>
+                                    </svg>
+                                    <svg>
+                                        <use xlink:href="/static/img/sprite7.svg#star-regular"></use>
+                                    </svg>
+                                </div>
+                            </div>
+                            <span class="algn">${{ product.price|floatformat:2 }}</span>
+                            <small style="display:flex">
+                                <p style="padding-right:0.5rem; text-decoration: line-through; "> $2 </p>
+                                <p>(-15%)</p>
+
+                            </small>
+                            <div class="card_priced-cart">
+
+                                <!-- <a class="btn-w" href="#">
+                                    Add to Cart
+                                </a> -->
+                                {% comment %}
+                                <button class="btn" id="addToCart" data-id="{{product.id}}" data-action="add">
+                                    <h4 style='font-weight: 50px'>Add To Cart</h4>
+                                    <div class="spinner-border seen" id='spinner' role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+
+                                </button>
+                                {% endcomment %}
+                                <button id="addToCart" data-id="{{product.id}}" data-action="add"
+                                    class='btn btn-primary-lg'>
+                                    Add To Cart
+                                    <div class="spinner-border seen" id='spinner' role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+
+
+                                </button>
+                                <a class="btn-bc" href="#">
+                                    Buy now
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+
+        <div class="container">
+            {% if similar_products %}
+            <div class="row align">
+                <h3>Related Searches</h3>
+            </div>
+            {% endif %}
+        </div>
+        <div class="container pos2">
+            <div class="dflex">
+                {% for product in similar_products %}
+                <div class="col-1-of-6 align">
+                    <div class="card flx-drt wdth">
+                        <div class="card_img">
+                            <a href="{% url 'detail' product.slug %}"><img src="{{product.image_url.url}}"
+                                    alt="slide1"></a>
+                        </div>
+                        <div class="card_priced pd-l">
+                            <div class="card_price-title">
+                                <h5>{{product.name}}</h5>
+                            </div>
+                            <p> A Lemon flavoured soft drink which contains Dextrin.</p>
+                            <div class="card_priced-r">
+                                <h5>3500+ Sold</h5>
+                                <div class="span">
+                                    4.0
+                                    <svg>
+                                        <use xlink:href="/static/img/sprite7.svg#star-regular"></use>
+                                    </svg>
+                                    <svg>
+                                        <use xlink:href="/static/img/sprite7.svg#star-regular"></use>
+                                    </svg>
+                                    <svg>
+                                        <use xlink:href="/static/img/sprite7.svg#star-regular"></use>
+                                    </svg>
+                                    <svg>
+                                        <use xlink:href="/static/img/sprite7.svg#star-regular"></use>
+                                    </svg>
+                                </div>
+                            </div>
+                            <span class="algn">${{ product.price|floatformat:2 }}</span>
+                            <small style="display:flex">
+                                <p style="padding-right:0.5rem; text-decoration: line-through; "> $2 </p>
+                                <p>(-15%)</p>
+
+                            </small>
+                            <div class="card_priced-cart">
+
+                                <a class="btn-w" href="#">
+                                    Add to Cart
+                                </a>
+                                <a class="btn-bc" href="#">
+                                    Buy now
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </section>
+</main>
+<script>
+    let counter = "{{counter}}"
+    let heartIcon = document.getElementById('heart')
+    let heartContainer = document.getElementById('heartContainer')
+    let form = document.getElementById("form");
+
+
+    form.addEventListener("submit", function (e) {
+        e.preventDefault()
+        document.getElementById('heartSpinner').style.display = 'block'
+        if (user == 'AnonymousUser') {
+            console.log('nsnsnsnsn')
+
+            document.getElementById('alertdanger').style.display = 'flex'
+            document.getElementById('removeItem').innerText = 'You need to be signed in'
+            document.getElementById('heartSpinner').style.display = 'none'
+        }
+
+        console.log(e.target)
+        counter++;
+        product_id = e.target.dataset.id
+        console.log(product_id)
+        if (counter % 2 == 0) {
+            counter = 0;
+
+        }
+        console.log(counter);
+
+
+        const data = { counter: counter, d: product_id };
+        console.log(data['d'])
+        let url = '/addsaveitems'
+        fetch(url, {
+            method: "POST", // or 'PUT'
+            headers: {
+                "Content-Type": "application/json",
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify(data),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("Success:", data);
+                console.log(typeof (data))
+                if (data > 0) {
+
+                    console.log('weeeeeeeeeeeeeeeee')
+                    document.getElementById('alert').style.display = 'flex'
+                    document.getElementById('alertdanger').style.display = 'none'
+                    heartIcon.setAttribute("class", "fa-solid fa-floppy-disk")
+                    document.getElementById('heartSpinner').style.display = 'none'
+
+
+                }
+                else {
+
+
+                    document.getElementById('alertdanger').style.display = 'flex'
+                    document.getElementById('alert').style.display = 'none'
+                    heartIcon.setAttribute("class", "fa-solid fa-floppy-disk")
+                    document.getElementById('heartSpinner').style.display = 'none'
+
+
+
+                }
+
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
+
+
+    });
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/static/frontend/script.js"></script>
+{% endblock %}
+
+
+</html>

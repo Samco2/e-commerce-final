@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends 'storeapp/base.html' %} 
+{% block content %}
+
+
+<body>
+   
+    <main class="mgn">
+        <div class="acct">
+            <ul class="acct_my">
+                <li>
+                    <a href="{% url 'dashboard' %}"> <svg>
+                            <use xlink:href="/static/img/sprite2.svg#user-heart"></use>
+                        </svg>
+                        My GBS Account
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'order' %}">
+                        <svg>
+                            <use xlink:href="/static/img/sprite.svg#shopping-cart"></use>
+                        </svg>
+                        Order
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'saveitems' %}">
+                        <svg>
+                            <use xlink:href="/static/img/sprite2.svg#heart"></use>
+                        </svg>Saved Items
+                    </a>
+                </li>
+                <hr style="border:1px solid #cacaca; width:100%;">
+                <li>
+    
+                    <a href="{% url 'UserProfile:signout' %}">LOGOUT</a>
+                </li>
+            </ul>
+            <div class="acct_over">
+
+                <div class="acct_over-hd">
+                    <h3>Account Overview</h3>
+                </div>
+
+                <div class="acct_over-detl">
+                    <div class="acct_over-detl-1">
+                        <div class="acct_over-detl-12">
+                            <h4>Account Details</h4>
+
+                            <a href="{% url 'updateaccount' %}">
+                                <svg class="nav_icon">
+                                    <use xlink:href="/static/img/sprite.svg#pencil"></use>
+                                </svg>
+                            </a>
+
+                        </div>
+                        <div>
+                            <P>{{customer.user.first_name}} {{customer.user.last_name}}</P>
+                            <p>{{customer.user.email}}</p>
+                        </div>
+                    </div>
+
+                    <div class="acct_over-detl-1">
+                        <div class="acct_over-detl-12">
+                            <div class="flex">
+                                <h4>ADDRESS BOOK
+
+                                </h4>
+                                {% if myaddress %}
+                                <a href= "{% url 'UserProfile:changeaddress' %}">
+                                    <svg class="nav_icon">
+                                        <use xlink:href="/static/img/sprite.svg#pencil"></use>
+                                    </svg>
+                                </a>
+                                {% endif %}
+                            </div>
+
+
+                        </div>
+                        {% for address in address %}
+                        <div>
+                            <p>Your default shipping address</p>
+                            <p>{{customer.user.first_name}} {{customer.user.last_name}}</p>
+                            <p>{{address.home_address}}</p>
+                            <p> {{address.bus_stop}}</p>
+                            <p>{{address.city}}, {{address.state}}</p>
+                            <p>{{customer.user.email}}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+                <div class="acct_over-detl">
+                    <div class="acct_over-detl-1">
+                        <div class="acct_over-detl-12">
+                            <h4>GBS Store Credit</h4>
+
+                        </div>
+                        <div>
+                            <span>$0.00</span>
+
+                        </div>
+                    </div>
+
+                    <div class="acct_over-detl-1">
+                        <div class="acct_over-detl-12">
+                            <h4>Edit NewsLetter References </h4>
+
+
+                        </div>
+                        <div>
+                            <p>You are currently not subscribed to any of our newsletters</p>
+
+                            <a href="#">EDIT NEWSLETTER PREFERENCES</a>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+   
+</body>
+{% endblock %}

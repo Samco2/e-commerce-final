@@ -1,0 +1,152 @@
+{% extends 'storeapp/base.html' %}{% load static %} {% block title %}Dashboard{%endblock %} {% block content %}
+<br>
+<br><br>
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-sm-12 col-lg-3 col-xl-3">
+      <ul class="list-group" style = "  list-style-type: none" >
+        <li><a class="dropdown-item" href="{% url 'account' %}"><span><i class="bi bi-person-check"></i></span> My Account</a></li>
+        <li><a class="dropdown-item" href="{% url 'order' %} "><span><i class="bi bi-cart"></i></span> Orders</a></li>
+        <li><a class="dropdown-item" href="{% url 'saveitems' %}"><span><i class="bi bi-heart"> </i>Saved Items</a></li>
+      </ul>
+    </div>
+
+    <div
+      class="col-12 col-sm-12 col-lg-9 col-xl-9"
+      style="border: 2px solid rgb(206, 212, 218); padding:10px 10px 10px 10px">
+      <div class="row">
+        <div class="col-12 col-sm-12 col-lg-6 col-xl-6" style="border-right: 2px solid rgb(206, 212, 218)">
+          <div class="row">
+            <div class="col-10">
+              <h5>ACCOUNT INFORMATION</h5>
+            </div>
+            <div class="col-2">
+              <a href = " {% url 'updateaccount' %} ">
+              <button class= "nbtn" ><i class="bi bi-pen"></i></button>
+            </a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <p>{{customer.user.first_name}} {{customer.user.last_name}}</p>
+              <p>{{customer.user.email}}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-sm-12 col-lg-6 col-xl-6">
+          <div class="row">
+            <div class="col-10">
+              <h5>ADDRESS BOOK</h5>
+            </div>
+            <div class="col-2">
+              {% if myaddress %}
+                <a href = " {% url 'UserProfile:changeaddress' %} ">
+              <button class= "nbtn"><i class="bi bi-pen"></i></button></a>
+              {% endif %}
+            </div>
+          </div>
+          <div class="row">
+            {% for address in address %}
+            <div class="col-12">
+              <p>
+                {{address.home_address}} {{address.bus_stop}}, {{address.city}},
+                {{address.state}}
+              </p>
+              <p>{{customer.user.email}}</p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<br> <br>
+<main class="pt-5">
+    <div class="container" style="max-width: 1000px">
+        <div class="col-12">
+            <h1 class="h2">Your Dashboard</h1>
+        </div>
+        <div class="col-12 d-flex justify-content-between">
+            <b class='txt'>Manage your <b>orders</b> and personal details</b>
+            <div><a href="#">Change Details</a></div>
+        </div>
+      <hr class="hr">
+      <br>
+    </div>
+    <div class="container" style="max-width: 1000px">
+        {% for order in orders %}
+        <div class="row g-3">
+
+            <div class="col-12 bg-light p-3 d-flex justify-content-between">
+                <div class="d-flex d-flex-inline">
+
+                    <b class="pe-3">{{ order.created }}</b>
+                    <div class="dropdown">
+                        <a class="text-reset text-decoration-none dropdown-toggle" href="#" role="link"
+                            id="dropdownLink" data-bs-toggle="dropdown" aria-expanded="false">
+                            <b>Dispacted to</b>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor"
+                                class="bi bi-chevron-down" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                    d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z" />
+                            </svg>
+                        </a>
+
+                        <ul class="dropdown-menu" aria-labelledby="dropdownLink">
+                            <li class="item small"><b>{{order.full_name}}</b></li>
+                            <li class="item small"><b>{{order.address1}}</b></li>
+                            <li class="item small"><b>{{order.address2}}</b></li>
+                            <li class="item small"><b>{{order.post_code}}</b></li>
+                        </ul>
+                    </div>
+
+                </div>
+                <div class="text-end">
+                    <b>Total paid:</b> <span class="fw-bold"><b>${{ order.total_paid }}</b></span>
+                </div>
+            </div>
+            <div class="col-md-5 col-lg-4 order-md-last p-0 order-3">
+                <div class="d-grid gap-2 ">
+                    <button class="btn btn-warning" type="button">Problem with order</button>
+                    <button class="btn btn-light" type="button">Leave a review</button>
+                </div>
+            </div>
+
+            <div class="col-md-7 col-lg-8 p-0">
+
+                {% for item in order.items.all %}
+                <div class="mb-3 border-0">
+                    <div class="row g-0">
+                        <div class="col-md-2 d-none d-md-block">
+                            <img class="img-fluid" style="width:90px" src="{{item.product.image.url}}" />
+                        </div>
+                        <div class="col-md-10">
+                            <div class="card-body p-1">
+                                <a class="text-decoration-none" href="{{ item.product.get_absolute_url }}">
+                                    <spam class="card-text small">{{item.product.name}}</spam>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                {% endfor %}
+<hr class="hr">
+
+            </div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+</main>
+
+
+
+
+
+{% endblock %}

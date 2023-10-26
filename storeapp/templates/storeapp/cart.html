@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+<body>
+  {% extends 'storeapp/base.html' %}
+  {% block content %}
+  <!-- Quantity and Price Section -->
+  <style>
+    /* #cart_image {
+            width: 50px;
+            height: 50px;
+        }
+
+        #cart_image img {
+            width: 100%;
+            height: 100%
+        } */
+
+    .seen {
+      display: none
+    }
+  </style>
+
+  <main>
+    <section class="cart">
+      <h3>Your Cart</h3>
+
+      <div class="cart-itm" id='cartitems'>
+        <div class="cart-itm-1">
+          <div class="cart-itm-title">
+            <div class="dflx">
+              <h4>Item details</h4>
+              <p>(Free Shipping on order above $6000)</p>
+            </div>
+            <hr>
+          </div>
+          {% for item in cartitems %}
+          <div class="cart-itm-prt">
+            <div class="cart-itm-prt-img" id="cart_image">
+              <img src={{item.product.image.url}} alt="Hakushu.png">
+            </div>
+            <div class="cart-itm-prt-txt">
+              <div class="cart-itm-prt-txt-1">
+                <h5>{{item.product.name}}</h5>
+                <span>
+                  <p>Qty:</p>
+
+
+                  <!-- <div class="qty" type='number'>
+                    <img src="/static/img/-ve.png" alt="-ve" data-price={{item.product.price}}
+                      data-p_id={{item.product.id}} id="add">
+                    <p>{{item.quantity}}</p>
+                    <img src="/static/img/+ve.png" alt="+ve" data-price={{item.product.price}}
+                      data-p_id={{item.product.id}} id="sub">
+                  </div> -->
+
+                  <div class="qty" id='cartitems'>
+                    <input type='number' class='quantity' value="{{item.quantity}}" data-price={{item.product.price}}
+                      data-p_id={{item.product.id}} style='width: 50px; padding-left: 5px'>
+                  </div>
+                </span>
+                <p>Size: 500ml</p>
+                <p>{{item.product.name}}'s-price:  ${{item.product.price|floatformat:2}}</p>
+                
+                
+                <div class="cart-itm-prt-txt-2">
+                  <a href="#"><button data-p_id={{item.product.id}}> Remove Item</button></a>
+                  <a href="#">Add to Wishlist</a>
+
+                </div>
+              </div>
+              <div class="cart-itm-prt-txt-3">
+                <!-- <span>Price: ${{item.subTotal | floatformat:2}}</span> -->
+                <p id='cartitems'>Price: ${{item.subTotal | floatformat:2}}</p>
+                <a href=" {% url 'index' %}">Continue shopping</a>
+
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="cart-itm-2">
+          <div class="cart-itm-order">
+            <h4>Order summary </h4>
+            <hr>
+            <div class="cart-itm-order-de">
+              <div class="cart-flx">
+                <p>Number of items</p>
+                <p id='list_of_items'>{{cart.num_of_items}}</p>
+
+              </div>
+              <div class="cart-flx">
+                <h5>Subtotal</h5>
+                <p id='cartTotal'> ${{cart.cart_total|floatformat:2}}</p>
+              </div>
+              <div class="cart-flx">
+                <p>shipping and handling</p>
+                <p>0</p>
+              </div>
+
+
+
+              <div class="cart-flx-p">
+                <p class="my-0">Promo code</p>
+                <small>NO COUPONS ATTACHED</small>
+              </div>
+
+              <div class="cart-flx-t">
+                <h5>Total </h5>
+                <p id='cartTotal'> ${{cart.cart_total|floatformat:2}}</p>
+              </div>
+
+            </div>
+            <a href=" {% url 'payment:home' %} ">
+              <button type="button">Checkout </button></a>
+
+
+            <div class='row justify-content-center'>
+              <div class="spinner-border text-info seen" role="status" id='spinner'>
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+
+          </div>
+          <form action="/add-coupon" method="POST">
+            <input type="hidden" name="csrfmiddlewaretoken"
+              value="A8zZmBqALSHgjrfNrcmYpRRhYn3sVfFc4qPbbjcnUaTTHlGgjVIRfuQSeT4j1cnW">
+            <div class="ipt-group">
+
+              <input type="text" placeholder="Redeem your promo code" aria-label="Recipient's user_name"
+                aria-describedby="basic-addon2">
+              <div class="ipt-group-append">
+                <button type="submit">
+                  Redeem
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+      </div>
+
+
+    </section>
+
+
+    <div class="container">
+      <div class="row align .prm">
+        <h3 class="prm">Related Searches</h3>
+      </div>
+    </div>
+    <div class="container pos2">
+      <div class="row align gp">
+        <div class="col-1-of-6">
+          <div class="card wdth flx-drt">
+            <div class="card_img">
+              <img src="/static/img/product/bev/C.C. Lemon.png" alt="slide1">
+            </div>
+            <div class="card_price pd-l">
+              <div class="card_price-title">
+                <h5> Canned Kaku</h5>
+              </div>
+              <span class="algn">$20</span>
+              <p>Save 15%</p>
+              <div class="card_price-cart"><a href="#">
+                  <p>Add to Cart</p>
+                  <svg>
+                    <use xlink:href="/static/img/sprite.svg#arrow-right"></use>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-1-of-6">
+          <div class="card flx-drt wdth">
+            <div class="card_img">
+              <img src="/static/img/product/bev/C.C. Lemon.png" alt="slide1">
+            </div>
+            <div class="card_price pd-l">
+              <div class="card_price-title">
+                <h5> Canned Kaku</h5>
+              </div>
+              <span class="algn">$20</span>
+              <p>Save 15%</p>
+              <div class="card_price-cart"><a href="#">
+                  <p>Add to Cart</p>
+                  <svg>
+                    <use xlink:href="/static/img/sprite.svg#arrow-right"></use>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-1-of-6">
+          <div class="card flx-drt wdth">
+            <div class="card_img">
+              <img src="/static/img/product/bev/C.C. Lemon.png" alt="slide1">
+            </div>
+            <div class="card_price pd-l">
+              <div class="card_price-title">
+                <h5> Canned Kaku</h5>
+              </div>
+              <span class="algn">$20</span>
+              <p>Save 15%</p>
+              <div class="card_price-cart"><a href="#">
+                  <p>Add to Cart</p>
+                  <svg>
+                    <use xlink:href="/static/img/sprite.svg#arrow-right"></use>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-1-of-6">
+          <div class="card flx-drt wdth">
+            <div class="card_img">
+              <img src="/static/img/product/bev/C.C. Lemon.png" alt="slide1">
+            </div>
+            <div class="card_price pd-l">
+              <div class="card_price-title">
+                <h5> Canned Kaku</h5>
+              </div>
+              <span class="algn">$20</span>
+              <p>Save 15%</p>
+              <div class="card_price-cart"><a href="#">
+                  <p>Add to Cart</p>
+                  <svg>
+                    <use xlink:href="/static/img/sprite.svg#arrow-right"></use>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-1-of-6">
+          <div class="card flx-drt wdth">
+            <div class="card_img">
+              <img src="/static/img/product/bev/C.C. Lemon.png" alt="slide1">
+            </div>
+            <div class="card_price pd-l">
+              <div class="card_price-title">
+                <h5> Canned Kaku</h5>
+              </div>
+              <span class="algn">$20</span>
+              <p>Save 15%</p>
+              <div class="card_price-cart"><a href="#">
+                  <p>Add to Cart</p>
+                  <svg>
+                    <use xlink:href="/static/img/sprite.svg#arrow-right"></use>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-1-of-6">
+          <div class="card flx-drt wdth">
+            <div class="card_img">
+              <img src="/static/img/product/bev/C.C. Lemon.png" alt="slide1">
+            </div>
+            <div class="card_price pd-l">
+              <div class="card_price-title">
+                <h5> Canned Kaku</h5>
+              </div>
+              <span class="algn">$20</span>
+              <p>Save 15%</p>
+              <div class="card_price-cart"><a href="#">
+                  <p>Add to Cart</p>
+                  <svg>
+                    <use xlink:href="/static/img/sprite.svg#arrow-right"></use>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+
+  <script>
+    let cartitemContainer = document.getElementById('cartitems')
+    let qtyField = document.getElementsByTagName('input')
+    let grandTotal = document.getElementById('grandTotal')
+    let spinners = document.getElementsByClassName('spinner-border')
+
+    for (let i = 0; i < qtyField.length; i++) {
+      qtyField[i].addEventListener('change', updateQuantity)
+    }
+    function updateQuantity(e) {
+
+
+      document.getElementById('spinner').style.display = 'block'
+
+      let grandParent = e.target.parentElement.parentElement
+      let subtotalParent = grandParent.children[4]
+      console.log(subtotalParent)
+
+
+      let quantity = e.target.value
+      let product_id = e.target.dataset.p_id
+      let price = e.target.dataset.price
+      let items = document.getElementById('cartTotal')
+      console.log(items)
+      console.log(quantity)
+      if (e.target.value < 2) {
+        e.target.value = 1
+      }
+
+
+
+
+      const data = { id: product_id, qty: quantity, product_price: price };
+      let url = '/updatequantity'
+      fetch(url, {
+        method: 'POST', // or 'PUT'
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify(data),
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+          qty.innerText = data.num
+
+          document.getElementById('list_of_items').innerHTML = `<strong>Items: ${data.num}</strong>`
+          document.getElementById('cartTotal').innerHTML = `<strong>Total: $${parseFloat(data.total).toFixed(2)}</strong>`
+          subtotalParent.innerHTML = `<h5> $${parseFloat(data.qty * data.price).toFixed(2)} </h5>`
+
+          document.getElementById('spinner').style.display = 'none'
+
+
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+
+
+    }
+    let delBtns = document.getElementsByClassName('del')
+    for (let i = 0; i < delBtns.length; i++) {
+      delBtns[i].addEventListener('click', removeCartitems)
+    }
+    function removeCartitems(e) {
+      pro_id = e.target.dataset.p_id
+      console.log(pro_id)
+
+      const data = { id: pro_id }
+      let url = '/deleteitems'
+      fetch(url, {
+        method: 'POST', // or 'PUT'
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify(data),
+      })
+        .then(response => response.json())
+        .then(data => {
+
+          console.log(data)
+          location.reload()
+
+
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+
+    }
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script type="text/javascript" src="/static/frontend/script.js"></script>
+  {% endblock %}
+</body>
+
+</html>

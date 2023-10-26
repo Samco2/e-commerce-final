@@ -1,0 +1,87 @@
+{% extends 'storeapp/base.html' %}
+{% load static %}
+{% block title %}
+{% if category %}{{ category.name }}{% else %}Products{% endif %}
+{% endblock %}
+{% block content %}
+
+
+<main>
+  <div class="container">
+    <div class="row align">
+      <h3 style="color: #01070e">Available {{category.title}}'s Products</h3>
+    </div>
+  </div>
+
+  <div class="pos">
+
+
+
+    <div class="dflx align">
+      {% for product in products %}
+
+      <div class="col-1-of-6 align">
+        <div class="card flx-drt wdth">
+          <div class="card_img">
+            <a href="{% url 'detail' product.slug %}"><img src="{{product.image_url.url}}" alt="slide1"></a>
+          </div>
+          <div class="card_priced pd-l">
+            <div class="card_price-title">
+              <h5>{{product.name}}</h5>
+            </div>
+            <p> A Lemon flavoured soft drink which contains Dextrin.</p>
+            <div class="card_priced-r">
+              <h5>3500+ Sold</h5>
+              <div class="span">
+                4.0
+                <svg>
+                  <use xlink:href="/static/img/sprite7.svg#star-regular"></use>
+                </svg>
+                <svg>
+                  <use xlink:href="/static/img/sprite7.svg#star-regular"></use>
+                </svg>
+                <svg>
+                  <use xlink:href="/static/img/sprite7.svg#star-regular"></use>
+                </svg>
+                <svg>
+                  <use xlink:href="/static/img/sprite7.svg#star-regular"></use>
+                </svg>
+              </div>
+            </div>
+            <span class="algn">${{ product.price|floatformat:2 }}</span>
+            <small style="display:flex">
+              <p style="padding-right:0.5rem; text-decoration: line-through; "> $2 </p>
+              <p>(-15%)</p>
+
+            </small>
+            <div class="card_priced-cart">
+
+              <a class="btn-w" href="#">
+                Add to Cart
+              </a>
+              <a class="btn-bc" href="#">
+                Buy now
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {% endfor %}
+
+    </div>
+
+
+
+
+
+  </div>
+
+</main>
+
+
+
+
+
+
+{% endblock %}

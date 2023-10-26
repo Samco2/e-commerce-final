@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    {% extends 'storeapp/base.html' %} 
+    {% block content %}
+    <main class="mgn">
+        <div class="acct">
+            <ul class="acct_my">
+                <li>
+                    <a href="{% url 'dashboard' %}"> <svg>
+                            <use xlink:href="/static/img/sprite2.svg#user-heart"></use>
+                        </svg>
+                        My GBS Account
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'order' %}">
+                        <svg>
+                            <use xlink:href="/static/img/sprite.svg#shopping-cart"></use>
+                        </svg>
+                        Order
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'saveitems' %}">
+                        <svg>
+                            <use xlink:href="/static/img/sprite2.svg#heart"></use>
+                        </svg>Saved Items
+                    </a>
+                </li>
+                <hr style="border:1px solid #cacaca; width:100%;">
+                <li>
+
+                    <a href="#">LOGOUT</a>
+                </li>
+            </ul>
+            <div class="acct_over">
+
+                <div class="acct_over-hd">
+                    <h3>Saved Items</h3>
+                </div>
+                {% for item in saveitems %}
+
+
+                <div class="acct_over-prd">
+                    <div class="acct_over-ord">
+                        
+                            <img src= {{item.product.image.url}} alt="Hakushu.png">  
+                        
+                    </div>
+                    <div class="acct_over-ord-dlt">
+                        <p> {{item.product.name}}</p>
+                        <p>size: 50ml</p>
+                        <span>${{item.product.price|floatformat:2}}</span>
+                        <div class="prc">
+                            <p>${{item.product.old_price|floatformat:2}}</p>
+                            <small>-5.2%</small>
+                        </div>
+                    </div>
+    
+                    <div class="acct_over-ord-rmv">
+                        <a href="#" class="btn btn-b">Buy Now</a>
+                       
+                        <a href="#">
+                            <svg>
+                                <use xlink:href="/static/img/sprite8.svg#delete"></use>
+                            </svg>
+                            Remove</a>
+                    </div>
+    
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+
+    {% endblock %}
+
+</body>
